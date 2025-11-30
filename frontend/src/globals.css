@@ -1,0 +1,26 @@
+@import "tailwindcss";
+
+
+.heart {
+  width: 128px;        /* w-32 */
+  height: 128px;       /* h-32 */
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  transition: transform 0.8s ease-out;
+}
+
+.heart.liked {
+  animation: spring 0.9s forwards;
+}
+
+@keyframes spring {
+  0%   { transform: translate(-50%, -50%) scale(0); }
+  50%  { transform: translate(-50%, -50%) scale(1.4); }   /* overshoot */
+  70%  { transform: translate(-50%, -50%) scale(0.85); }  /* bounce back */
+  85%  { transform: translate(-50%, -50%) scale(1.1); }   /* small bounce */
+  95%  { transform: translate(-50%, -50%) scale(0.95); }  /* settle */
+  100% { transform: translate(-50%, -50%) scale(1); }     /* final size */
+}
+
