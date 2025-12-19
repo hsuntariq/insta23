@@ -16,7 +16,8 @@ const initialState = {
     likeLoading: false,
     likeError: false,
     likeSuccess: false,
-    likeMessage: ''
+    likeMessage: '',
+    myPosts: []
 }
 
 
@@ -53,6 +54,14 @@ export const addCommentData = createAsyncThunk( 'add-comment', async ( commentDa
 export const addLikes = createAsyncThunk( 'add-likes', async ( likesData, thunkAPI ) => {
     try {
         const response = await axios.post( `http://localhost:5174/api/posts/add-likes/${likesData?.post_id}/${likesData?.user_id}` )
+        return response.data
+    } catch ( error ) {
+        return thunkAPI.rejectWithValue( error.response.data )
+    }
+} )
+export const getRelaventPosts = createAsyncThunk( 'get-posts', async ( user_id, thunkAPI ) => {
+    try {
+        const response = await axios.get( `http://localhost:5174/api/posts/get-my-posts/${user_id}` )
         return response.data
     } catch ( error ) {
         return thunkAPI.rejectWithValue( error.response.data )
@@ -136,6 +145,19 @@ export const postSlice = createSlice( {
                 } )
             } )
 
+            .addCase( getRelaventPosts.pending, ( state, action ) => {
+                state.postLoading = true
+            } )
+            .addCase( getRelaventPosts.rejected, ( state, action ) => {
+                state.postLoading = false
+                state.postError = true
+                state.postMessage = action.payload
+            } )
+            .addCase( getRelaventPosts.fulfilled, ( state, action ) => {
+                state.postLoading = false
+                state.postSuccess = true
+                state.myPosts = action.payload
+            } )
     }
 } )
 

@@ -7,6 +7,7 @@ import { errorHandler } from './middlewares/errorMIddleware.js'
 import cors from 'cors'
 import { connectDB } from './config/connect.js'
 import { userRouter } from './routes/userRoutes.js'
+import { messageRouter } from './routes/messageRoutes.js'
 const app = express()
 app.use( cors() )
 app.use( express.json() )
@@ -17,6 +18,7 @@ connectDB()
 
 app.use( '/api/posts/', postRouter )
 app.use( '/api/users/', userRouter )
+app.use( '/api/messages/', messageRouter )
 
 
 app.use( errorHandler )

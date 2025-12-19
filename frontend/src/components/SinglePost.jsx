@@ -11,8 +11,10 @@ import { useDispatch, useSelector } from 'react-redux';
 import { addCommentData, addLikes } from '../features/posts/postSlice';
 import { CircularProgress } from 'react-loader-spinner';
 import { toast } from 'react-hot-toast';
+import CommentPreview from './CommentPreview';
+import { Link } from 'react-router-dom';
 const SinglePost = ( { caption, image, filter, createdAt, user_id, _id, comments, likes } ) => {
-
+    const [showCommentPreview, setShowCommentPreview] = useState( false )
     const { postLoading, commentLoading, commentSuccess, commentError, commentMessage } = useSelector( ( state ) => state.daak )
     const [comment, setComment] = useState( '' )
     const [liked, setLiked] = useState( false )
@@ -22,7 +24,8 @@ const SinglePost = ( { caption, image, filter, createdAt, user_id, _id, comments
         const commentData = {
             post_id: _id,
             user_id: user_id._id,
-            comment
+            comment,
+            userName: user_id.username
         }
 
         dispatch( addCommentData( commentData ) )
@@ -48,7 +51,7 @@ const SinglePost = ( { caption, image, filter, createdAt, user_id, _id, comments
     return (
         <>
 
-
+            {showCommentPreview && <CommentPreview image={image} user={user_id} comments={comments} setShowCommentPreview={setShowCommentPreview} caption={caption} />}
 
 
 
@@ -61,9 +64,9 @@ const SinglePost = ( { caption, image, filter, createdAt, user_id, _id, comments
                         <div className="flex items-center gap-3">
                             {user_id.image ? <img src={user_id.image} className='w-10 h-10 rounded-full' alt="" /> : <img className='w-10 h-10 rounded-full' src="https://cdn.pixabay.com/photo/2023/02/18/11/00/icon-7797704_640.png" alt="" />}
 
-                            <h5 className="font-semibold">
+                            <Link to={`/profile-page/${user_id?._id}`} className="font-semibold">
                                 {user_id?.username}
-                            </h5>
+                            </Link>
                         </div>
                         <GoDotFill className='w-[10px] text-gray-400' />
                         <p className="text-gray-400 text-sm">
@@ -107,7 +110,7 @@ const SinglePost = ( { caption, image, filter, createdAt, user_id, _id, comments
                                 )}
                             </span>
 
-                            <FaRegComment />
+                            <FaRegComment onClick={() => setShowCommentPreview( true )} className='cursor-pointer' />
                             <LuSend />
 
                         </div>

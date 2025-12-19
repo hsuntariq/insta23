@@ -6,6 +6,8 @@ import 'react-loading-skeleton/dist/skeleton.css'
 import Login from './pages/Login'
 import Register from './pages/Register'
 import { Toaster } from 'react-hot-toast'
+import ProfilePage from './pages/ProfilePage'
+import Chatkhana from './pages/ChatKhana'
 const App = () => {
   return (
     <Router>
@@ -14,6 +16,8 @@ const App = () => {
         <Route path='/home' element={<Home />} />
         <Route path='/' element={<Login />} />
         <Route path='/register' element={<Register />} />
+        <Route path='/profile-page/:user_id' element={<ProfilePage />} />
+        <Route path='/messages' element={<Chatkhana />} />
       </Routes>
     </Router>
   )

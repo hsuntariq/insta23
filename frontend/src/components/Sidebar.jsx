@@ -1,6 +1,7 @@
 import React from 'react'
 import { sidebarData } from '../data/sidebarData'
 import SmallBottomBar from './SmallBottomBar'
+import { Link } from 'react-router-dom'
 
 const Sidebar = ( { showModal, setShowModal } ) => {
 
@@ -11,9 +12,9 @@ const Sidebar = ( { showModal, setShowModal } ) => {
                 <ul className="flex md:flex-col flex-row md:relative fixed bottom-0 bg-white w-full justify-center md:border-t-0 border-t-1 border-gray-200 select-none">
                     {
                         sidebarData.map( ( item, index ) => {
-                            return <li onClick={index == 6 ? () => setShowModal( true ) : ''} key={item.id} className="flex  justify-center xl:justify-start items-center  gap-4 p-4 hover:bg-gray-100 rounded-lg cursor-pointer active:scale-98">
+                            return <Link to={item.link} onClick={index == 6 ? () => setShowModal( true ) : ''} key={item.id} className="flex  justify-center xl:justify-start items-center  gap-4 p-4 hover:bg-gray-100 rounded-lg cursor-pointer active:scale-98">
                                 {item.icon} <span className='hidden xl:block'>{item.title}</span>
-                            </li>
+                            </Link>
                         } )
                     }
                 </ul>

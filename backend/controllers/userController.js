@@ -34,3 +34,14 @@ export const registerUser = async ( req, res ) => {
     } )
     res.send( newUser )
 }
+
+export const findUser = async ( req, res ) => {
+    const { id } = req.params
+    const myUser = await User.findById( id )
+    res.send( myUser )
+}
+
+export const getAllUsers = async ( req, res ) => {
+    let allUsers = await User.find()
+    res.send( allUsers )
+}

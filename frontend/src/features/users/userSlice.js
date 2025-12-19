@@ -11,6 +11,8 @@ const initialState = {
     userSuccess: false,
     userError: false,
     userMessage: '',
+    foundUser: null,
+    allUsers: []
 }
 
 
@@ -22,6 +24,28 @@ export const regUser = createAsyncThunk( 'user', async ( userData, thunkAPI ) =>
         return response.data
     } catch ( error ) {
         return thunkAPI.rejectWithValue( error.response.data )
+    }
+} )
+
+
+export const findMyUser = createAsyncThunk( 'find-user', async ( user_id, thunkAPI ) => {
+    try {
+        const response = await axios.get( `http://localhost:5174/api/users/find-user/${user_id}` )
+        return response.data
+    } catch ( error ) {
+        return thunkAPI.rejectWithValue( error.response.data )
+
+    }
+} )
+
+
+export const getAllUsers = createAsyncThunk( 'get-all-users', async ( _, thunkAPI ) => {
+    try {
+        const response = await axios.get( 'http://localhost:5174/api/users/get-all-users' )
+        return response.data
+    } catch ( error ) {
+        return thunkAPI.rejectWithValue( error.response.data )
+
     }
 } )
 
@@ -53,6 +77,35 @@ export const userSlice = createSlice( {
                 state.userSuccess = true
                 state.user = action.payload
             } )
+            .addCase( findMyUser.pending, ( state, action ) => {
+                state.userLoading = true
+            } )
+            .addCase( findMyUser.rejected, ( state, action ) => {
+                state.userLoading = false
+                state.userError = true
+                state.userMessage = action.payload
+                state.foundUser = null
+            } )
+            .addCase( findMyUser.fulfilled, ( state, action ) => {
+                state.userLoading = false
+                state.userSuccess = true
+                state.foundUser = action.payload
+            } )
+            .addCase( getAllUsers.pending, ( state, action ) => {
+                state.userLoading = true
+            } )
+            .addCase( getAllUsers.rejected, ( state, action ) => {
+                state.userLoading = false
+                state.userError = true
+                state.userMessage = action.payload
+                state.allUsers = null
+            } )
+            .addCase( getAllUsers.fulfilled, ( state, action ) => {
+                state.userLoading = false
+                state.userSuccess = true
+                state.allUsers = action.payload
+            } )
+
     }
 } )
 

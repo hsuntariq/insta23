@@ -34,12 +34,13 @@ export const getPosts = async ( req, res ) => {
 
 export const addComments = async ( req, res ) => {
     const { user_id, post_id } = req.params
-    const { comment } = req.body
+    const { comment, userName } = req.body
     //find the relavent post
     const findPost = await Post.findOne( { _id: post_id } )
     findPost.comments.unshift( {
         comment,
         user_id,
+        userName,
         timestamp: Date.now()
     } );
     await findPost.save();
@@ -57,4 +58,13 @@ export const addLikes = async ( req, res ) => {
     }
     await findPost.save()
     res.send( findPost )
+}
+
+
+export const relaventPosts = async ( req, res ) => {
+    const { id } = req.params
+    const myPosts = await Post.find( {
+        user_id: id
+    } )
+    res.send( myPosts )
 }

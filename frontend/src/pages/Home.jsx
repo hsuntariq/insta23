@@ -6,10 +6,12 @@ import PostModal from '../components/PostModal'
 import { useDispatch, useSelector } from 'react-redux'
 import { getDaak } from '../features/posts/postSlice'
 import PostSkeleton from '../components/PostSkeleton'
+import CommentPreview from '../components/CommentPreview'
+import Suggestions from '../components/Suggestions'
 
 const Home = () => {
     const [showModal, setShowModal] = useState( false )
-
+    const [allSuggestions, setAllSuggestions] = useState( false );
     const dispatch = useDispatch()
 
 
@@ -34,6 +36,7 @@ const Home = () => {
 
     return (
         <>
+
             <PostModal showModal={showModal} setShowModal={setShowModal} />
             <SmallBottomBar />
             <div className="grid grid-cols-4 gap-4">
@@ -52,6 +55,10 @@ const Home = () => {
                 {/* Right section - visible on large screens */}
                 <div className="hidden lg:block col-span-1">
                     {/* Reserved for future widgets or suggestions */}
+                    <Suggestions
+                        allSuggestions={allSuggestions}
+                        setAllSuggestion={setAllSuggestions}
+                    />
                 </div>
             </div>
         </>
