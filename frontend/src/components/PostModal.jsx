@@ -10,9 +10,12 @@ import { addDaak, getDaak } from '../features/posts/postSlice';
 import { IoClose } from 'react-icons/io5';
 import { MoonLoader, ScaleLoader } from 'react-spinners'
 import { CircularProgress } from 'react-loader-spinner'
+import { toast } from 'react-hot-toast';
 const PostModal = ( { showModal, setShowModal } ) => {
     const [imagePreview, setImagePreview] = useState( null )
     const [image, setImage] = useState( null )
+    const [videoPreview, setVideoPreview] = useState( null )
+    const [video, setVideo] = useState( null )
     const [zoomIn, setZoomIn] = useState( false )
     const [range, setRange] = useState( 100 )
     const [thirdScreen, setThirdScreen] = useState( false )
@@ -21,11 +24,24 @@ const PostModal = ( { showModal, setShowModal } ) => {
     const [caption, setCaption] = useState( '' )
     const handleImageChange = ( e ) => {
         let post = e.target.files[0]
-        console.log( post )
+
         let postURL = URL.createObjectURL( post )
+
         console.log( postURL )
-        setImagePreview( postURL )
-        setImage( post )
+        if ( post.type.startsWith( 'video' ) ) {
+
+            setVideoPreview( postURL )
+            setVideo( post )
+            setImagePreview( null )
+            setImage( null )
+        } else if ( post.type.startsWith( 'image' ) ) {
+            setImagePreview( postURL )
+            setImage( post )
+            setVideoPreview( null )
+            setVideo( null )
+        } else {
+            toast.error( 'Please upload image/video' )
+        }
     }
 
     useEffect( () => {
@@ -49,9 +65,15 @@ const PostModal = ( { showModal, setShowModal } ) => {
         let data = new FormData()
         data.append( 'file', image )
         data.append( 'upload_preset', 'instagram' );
-        let response = await axios.post( 'http://api.cloudinary.com/v1_1/dwtsjgcyf/image/upload', data )
-        setImageLoading( false )
-        return response.data.url
+        if ( video && !image ) {
+            let response = await axios.post( 'http://api.cloudinary.com/v1_1/dwtsjgcyf/video/upload', data )
+            setImageLoading( false )
+            return response.data.url
+        } else if ( image && !video ) {
+            let response = await axios.post( 'http://api.cloudinary.com/v1_1/dwtsjgcyf/image/upload', data )
+            setImageLoading( false )
+            return response.data.url
+        }
 
     }
 
@@ -86,7 +108,7 @@ const PostModal = ( { showModal, setShowModal } ) => {
                 <IoClose className='absolute top-5 right-5 text-5xl z-[400] cursor-pointer text-white' onClick={() => setShowModal( false )} />
                 <div onClick={( e ) => e.stopPropagation()} className={`bg-white  transition-all duration-300 select-none flex flex-col justify-center items-center py-5 pb-0 ${thirdScreen ? 'xl:w-1/2' : 'xl:w-1/3'} lg:w-1/2 md:w-[80%] w-[90%] relative overflow-hidden rounded-xl gap-4`}>
                     {
-                        imagePreview ? (
+                        imagePreview || videoPreview ? (
                             <>
                                 <div className="flex w-full px-3 justify-between items-center">
                                     <FaArrowLeft onClick={
@@ -94,12 +116,20 @@ const PostModal = ( { showModal, setShowModal } ) => {
                                             setThirdScreen( false )
                                             setEditFilter( filters.original )
                                             setFourthScreen( false )
-                                        } : () => setImagePreview( null )
+                                        } : () => {
+                                            setImagePreview( null )
+                                            setVideoPreview( null )
+
+                                        }
                                     } />
                                     <h2 className="cursor-pointer">Post</h2>
                                     <h2 onClick={thirdScreen ? () => setFourthScreen( true ) : () => setThirdScreen( true )} className="cursor-pointer text-blue-600">
                                         Next
                                     </h2>
+                                    {videoPreview && <h2 onClick={() => setFourthScreen( true )} className="cursor-pointer text-blue-600">
+                                        Next2
+                                    </h2>}
+
                                 </div>
 
                                 <div onClick={() => setZoomIn( true )} className={`h-10 w-10 flex justify-center items-center z-[400] rounded-full   absolute bottom-3 left-3 ${zoomIn ? 'bg-white text-black' : 'bg-black/50 text-white'}`}>
@@ -123,7 +153,9 @@ const PostModal = ( { showModal, setShowModal } ) => {
                                 </div>
                                 <div className={`overflow-hidden ${thirdScreen ? 'gap-3' : 'gap-0'} flex w-full h-[400px]`}>
 
-                                    <FilteredImage image={imagePreview} filter={editFilter} scale={range / 100} />
+                                    {
+                                        imagePreview ? <FilteredImage image={imagePreview} filter={editFilter} scale={range / 100} /> : <video src={videoPreview} controls className='object-cover'></video>
+                                    }
 
                                     {/* <img style={{
                                         scale: range / 100
@@ -153,9 +185,6 @@ const PostModal = ( { showModal, setShowModal } ) => {
 
 
                                     {/* fourth/caption screen */}
-
-
-
 
 
 
