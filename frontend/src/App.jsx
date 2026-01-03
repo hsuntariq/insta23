@@ -8,6 +8,7 @@ import Register from './pages/Register'
 import { Toaster } from 'react-hot-toast'
 import ProfilePage from './pages/ProfilePage'
 import Chatkhana from './pages/ChatKhana'
+import VideoCallZego from './pages/VideoCall'
 const App = () => {
   return (
     <Router>
@@ -18,6 +19,7 @@ const App = () => {
         <Route path='/register' element={<Register />} />
         <Route path='/profile-page/:user_id' element={<ProfilePage />} />
         <Route path='/messages' element={<Chatkhana />} />
+        <Route path='/video-call/:caller_id/:receiver_id' element={<VideoCallZego />} />
       </Routes>
     </Router>
   )

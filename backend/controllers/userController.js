@@ -45,3 +45,23 @@ export const getAllUsers = async ( req, res ) => {
     let allUsers = await User.find()
     res.send( allUsers )
 }
+
+export const loginUser = async ( req, res ) => {
+    const { mobile, password } = req.body
+
+    let findMobile = await User.findOne( { mobile } )
+    if ( !findMobile ) {
+        res.status( 404 )
+        throw new Error( "Email/Mobile doesen't exist" )
+    } else {
+        if ( await bcrypt.compare( password, findMobile.password ) ) {
+            res.send( findMobile )
+        } else {
+            res.status( 401 )
+            throw new Error( "Invalid Password" )
+        }
+    }
+
+
+
+}
